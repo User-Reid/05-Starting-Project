@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  type ReactNode,
-  useState,
-  useReducer,
-} from "react";
+import { createContext, useContext, type ReactNode, useReducer } from "react";
 
 type Timer = {
   name: string;
@@ -31,33 +25,50 @@ type TimersContextProviderProps = {
   children: ReactNode;
 };
 
-type Action = {
-  type: "ADD_TIMER" | "STOP_TIMER" | "START_TIMER";
+type StartTimersAction = {
+  type: "START_TIMERS";
 };
 
+type StopTimersAction = {
+  type: "STOP_TIMERS";
+};
+
+type AddTimerAction = {
+  type: "ADD_TIMER";
+  payload: Timer;
+};
+
+type Action = StartTimersAction | StopTimersAction | AddTimerAction;
+
 function timersReducer(state: TimersState, action: Action): TimersState {
-  if (action.type === "START_TIMER") {
+  if (action.type === "START_TIMERS") {
     return {
       ...state,
       isRunning: true,
     };
   }
-  if (action.type === "STOP_TIMER") {
+
+  if (action.type === "STOP_TIMERS") {
     return {
       ...state,
       isRunning: false,
     };
   }
+
   if (action.type === "ADD_TIMER") {
     return {
       ...state,
-      timers: [...state.timers],
-      {
-        name,
-        duration
-      }
+      timers: [
+        ...state.timers,
+        {
+          name: action.payload.name,
+          duration: action.payload.duration,
+        },
+      ],
     };
   }
+
+  return state;
 }
 
 const TimersContext = createContext<TimersContextValue | null>(null);
@@ -78,16 +89,16 @@ export default function TimersContextProvider({
   const [timersState, dispatch] = useReducer(timersReducer, initialState);
 
   const ctx: TimersContextValue = {
-    timers: [],
-    isRunning: false,
+    timers: timersState.timers,
+    isRunning: timersState.isRunning,
     addTimer(timerData) {
-      dispatch({ type: "ADD_TIMER" });
+      dispatch({ type: "ADD_TIMER", payload: timerData });
     },
     startTimer() {
-      dispatch({ type: "START_TIMER" });
+      dispatch({ type: "START_TIMERS" });
     },
     stopTimers() {
-      dispatch({ type: "STOP_TIMER" });
+      dispatch({ type: "STOP_TIMERS" });
     },
   };
 
