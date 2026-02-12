@@ -35,7 +35,30 @@ type Action = {
   type: "ADD_TIMER" | "STOP_TIMER" | "START_TIMER";
 };
 
-function timersReducer(state: TimersState, action: Action): TimersState {}
+function timersReducer(state: TimersState, action: Action): TimersState {
+  if (action.type === "START_TIMER") {
+    return {
+      ...state,
+      isRunning: true,
+    };
+  }
+  if (action.type === "STOP_TIMER") {
+    return {
+      ...state,
+      isRunning: false,
+    };
+  }
+  if (action.type === "ADD_TIMER") {
+    return {
+      ...state,
+      timers: [...state.timers],
+      {
+        name,
+        duration
+      }
+    };
+  }
+}
 
 const TimersContext = createContext<TimersContextValue | null>(null);
 
