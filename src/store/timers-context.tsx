@@ -31,6 +31,12 @@ type TimersContextProviderProps = {
   children: ReactNode;
 };
 
+type Action = {
+  type: "ADD_TIMER" | "STOP_TIMER" | "START_TIMER";
+};
+
+function timersReducer(state: TimersState, action: Action): TimersState {}
+
 const TimersContext = createContext<TimersContextValue | null>(null);
 
 export function useTimersContext() {
@@ -46,14 +52,20 @@ export function useTimersContext() {
 export default function TimersContextProvider({
   children,
 }: TimersContextProviderProps) {
-  const contextReducer = useReducer(reducer, initialState);
+  const [timersState, dispatch] = useReducer(timersReducer, initialState);
 
   const ctx: TimersContextValue = {
     timers: [],
     isRunning: false,
-    addTimer(timerData) {},
-    startTimer() {},
-    stopTimers() {},
+    addTimer(timerData) {
+      dispatch({ type: "ADD_TIMER" });
+    },
+    startTimer() {
+      dispatch({ type: "START_TIMER" });
+    },
+    stopTimers() {
+      dispatch({ type: "STOP_TIMER" });
+    },
   };
 
   return (
